@@ -4,12 +4,10 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN yarn install --silent
+COPY yarn*.lock ./
+
+RUN yarn install
 
 COPY . ./
 
-RUN npm run build
-
-EXPOSE 3000
-
-CMD ["npm", "run", "dev"]
+CMD ["yarn", "run", "dev"]
