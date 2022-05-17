@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 function useRequest<T>(request: () => Promise<T> ) {
+  const [shouldRefetch, setShouldRefetch] = useState(false);
   const [state, setState] = useState<{loading: boolean, error: null | string, data: null | T}>({
     loading: false,
     error: null,
@@ -33,13 +36,20 @@ function useRequest<T>(request: () => Promise<T> ) {
       } catch (error: any) {
         setState({ loading: false, error, data: null });
       }
-    }
+    };
 
     loadData();
   }, [loadData, request]);
 
+  //****** refetch ******
+  useEffect(() => {
+    if (shouldRefetch) {
+      loadData();
+      setShouldRefetch(false);
+    }
+  }, [loadData, request, shouldRefetch]);
 
-  return {...state};
+  return {...state, refetch: () => setShouldRefetch(true)};
 }
 
 export default useRequest;

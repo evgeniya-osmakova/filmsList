@@ -29,15 +29,15 @@ const Bookmarks = () => {
           if (films.length === 0) {
             setLoading(false);
           }
-        })
-    }
+        });
+    };
 
     if (films.length === 0) {
       setLoading(true);
     }
 
     getFilms();
-  }, [])
+  }, [bookmarks, films]);
 
   return (
     <BookmarksDom loading={loading} error={error} films={films} setFilms={setFilms}/>

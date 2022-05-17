@@ -30,7 +30,7 @@ const FilmItem = styled(Container, {
 
 const Img = styled('img', {
   height: "15rem",
-})
+});
 
 type BookmarksDomProps = {
   films: FilmDetails[];
@@ -44,8 +44,8 @@ const BookmarksDom: React.FC<BookmarksDomProps> = ({ films, error, loading, setF
 
   const removeFromBookmarks = (id: number) => {
     setBookmarks((prevState) => prevState.filter((filmId) => filmId !== id));
-    setFilms((prevState) => prevState.filter(({id: filmId}) => filmId !== id))
-  }
+    setFilms((prevState) => prevState.filter(({id: filmId}) => filmId !== id));
+  };
 
   return (
     <>

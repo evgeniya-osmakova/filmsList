@@ -23,12 +23,12 @@ const FilmItem: React.FC<{filmsData: Film}> = ({ filmsData }) => {
   const addToBookmarks = () => {
     setBookmarks((prevState) => [...prevState, id]);
     setHasAdded(true);
-  }
+  };
 
   const removeFromBookmarks = () => {
     setBookmarks((prevState) => prevState.filter((filmId) => filmId !== id));
     setHasAdded(false);
-  }
+  };
 
   return (
     <Wrapper direction="vertical">

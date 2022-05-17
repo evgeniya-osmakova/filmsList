@@ -1,4 +1,4 @@
-import err from './hanging_404.gif'
+import err from './hanging_404.gif';
 import { styled } from '@stitches/react';
 import { Link } from 'react-router-dom';
 import Routes, { Pages } from '@/routes';

@@ -6,6 +6,7 @@ import { Film } from '@/models/models';
 import Routes, { Pages } from '@/routes';
 import { Link } from 'react-router-dom';
 import Pagination from '@/components/Pagination';
+import Button from '@/components/Button';
 
 const BookmarksLink = styled(Link, {
   display: "block",
@@ -36,7 +37,7 @@ const Input = styled('input', {
 
 const CheckboxLabel = styled('label', {
   cursor: "pointer",
-})
+});
 
 const Checkbox = styled('input', {
   variants: {
@@ -66,6 +67,7 @@ type FilmsListProps = {
     films: Film[],
     loading: boolean,
     error: null | string,
+    refetch: () => void,
   }
   upcomingFilms: {
     loadUpcomingFilms: () => void,
@@ -85,7 +87,7 @@ type FilmsListProps = {
 
 const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFilms, pagination, searchData}) => {
   const { search, setSearch } = searchData;
-  const { films, loading, error } = data;
+  const { films, loading, error, refetch } = data;
   const { page, setPage } = pagination;
   const {loadUpcomingFilms, showUpcoming, setShowUpcoming} = upcomingFilms;
   const {loadPopularFilms, showPopular, setShowPopular} = popularFilms;
@@ -94,7 +96,7 @@ const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFil
     if (page !== 1) {
       setPage(1);
     }
-  }
+  };
 
   const onShowUpcomingClick = () => {
     setShowUpcoming(true);
@@ -106,7 +108,7 @@ const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFil
     }
     clearPaginationState();
     loadUpcomingFilms();
-  }
+  };
 
   const onShowPopularClick = () => {
     setShowPopular(true);
@@ -118,7 +120,7 @@ const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFil
     }
     clearPaginationState();
     loadPopularFilms();
-  }
+  };
 
   const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setShowPopular(false);
@@ -127,7 +129,7 @@ const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFil
     if (page !== 1) {
       setPage(1);
     }
-  }
+  };
 
   return (
     <>
@@ -150,8 +152,12 @@ const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFil
           Popular films
         </CheckboxLabel>
       </Container>
-      <Error>{error}</Error>
-      {loading && films.length === 0 && <Container content="center">...Loading</Container>}
+      <Error>{(loading) ? "" : error}</Error>
+      <Container css={{height: "2rem"}} content="center">{(loading && films.length === 0) ? "...Loading" : ""}</Container>
+      {showUpcoming && films.length === 0 && error && <Button onClick={refetch} disabled={loading} text="Load again" style={{
+        margin :'2rem auto',
+        display :'block',
+      }}/>}
       <Pagination {...pagination} />
         <FilmsWrapper>
           {films.map((filmsData) => <FilmItem key={filmsData.id} filmsData={filmsData} />)}
@@ -159,6 +165,6 @@ const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFil
       <Pagination {...pagination} />
     </>
   );
-}
+};
 
 export default FilmsListDom;

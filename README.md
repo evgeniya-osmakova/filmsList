@@ -2,8 +2,9 @@
 
     git clone https://github.com/evgeniya-osmakova/filmsList.git
 
-    docker-compose up --build
+    docker build --tag films .
+    docker run --rm films
 
     
 Проект можно будет посмотреть в браузере по адресу http://localhost:3000/
-   
+

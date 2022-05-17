@@ -10,12 +10,12 @@ const Icon = styled('div', {
     textDecoration: "underline",
     transition: "opacity 0.5s ease, textDecoration  0.5s ease",
   }
-})
+});
 
 const Page = styled('div', {
   fontWeight: 700,
   margin: "0 1.5rem",
-})
+});
 
 
 type PaginationProps = {
