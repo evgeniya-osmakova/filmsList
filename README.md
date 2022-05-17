@@ -1,2 +1,2 @@
-Film data from https://www.themoviedb.org/
+Films list from https://www.themoviedb.org/
 
