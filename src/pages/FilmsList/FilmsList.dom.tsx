@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import FilmItem from '@/blocks/FilmItem';
 import { styled } from '@stitches/react';
 import { Container } from '@/styles/base';
@@ -22,7 +22,9 @@ const FilmsWrapper = styled('section', {
 const Error = styled('h5', {
   height: "2rem",
   color: "red",
-  margin: "0 auto"
+  display: "flex",
+  justifyContent: "center",
+  marginTop: "1rem",
 });
 
 const Input = styled('input', {
@@ -55,6 +57,7 @@ const Checkbox = styled('input', {
 type FilmsListProps = {
   pagination: {
     page: number,
+    setPage: React.Dispatch<React.SetStateAction<number>>,
     totalPages: number,
     onNextClick: () => void,
     onBackClick: () => void,
@@ -74,29 +77,56 @@ type FilmsListProps = {
     showPopular: boolean,
     setShowPopular: React.Dispatch<React.SetStateAction<boolean>>,
   }
+  searchData: {
+    search: string,
+    setSearch: React.Dispatch<React.SetStateAction<string>>,
+  }
 }
 
-const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFilms, pagination}) => {
+const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFilms, pagination, searchData}) => {
+  const { search, setSearch } = searchData;
   const { films, loading, error } = data;
+  const { page, setPage } = pagination;
   const {loadUpcomingFilms, showUpcoming, setShowUpcoming} = upcomingFilms;
   const {loadPopularFilms, showPopular, setShowPopular} = popularFilms;
 
-  const [search, setSearch] = useState("");
+  const clearPaginationState = () =>  {
+    if (page !== 1) {
+      setPage(1);
+    }
+  }
 
   const onShowUpcomingClick = () => {
     setShowUpcoming(true);
+    if (search) {
+      setSearch("");
+    }
     if (showPopular) {
       setShowPopular(false);
     }
+    clearPaginationState();
     loadUpcomingFilms();
   }
 
   const onShowPopularClick = () => {
     setShowPopular(true);
+    if (search) {
+      setSearch("");
+    }
     if (showUpcoming) {
       setShowUpcoming(false);
     }
+    clearPaginationState();
     loadPopularFilms();
+  }
+
+  const onSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShowPopular(false);
+    setShowUpcoming(false);
+    setSearch(e.target.value);
+    if (page !== 1) {
+      setPage(1);
+    }
   }
 
   return (
@@ -107,7 +137,7 @@ const FilmsListDom: React.FC<FilmsListProps> = ({data, upcomingFilms, popularFil
       <Container content="center" css={{marginTop: "3rem"}}>
         <label>
           Search for a film from <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">https://www.themoviedb.org/</a>
-          <Input placeholder="Spider-Man: Far From Home"/>
+          <Input placeholder="Spider-Man: Far From Home" onChange={onSearchChange} value={search} />
         </label>
       </Container>
       <Container content="center" css={{marginTop: "1rem"}}>

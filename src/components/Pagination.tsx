@@ -26,7 +26,7 @@ type PaginationProps = {
 }
 
 const Pagination: React.FC<PaginationProps> = ({page, totalPages, onNextClick, onBackClick}) => {
-  if (totalPages === 1) {
+  if (totalPages <= 1) {
     return null;
   }
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Film } from '@/models/models';
 import FilmsListDom from '@/pages/FilmsList/FilmsList.dom';
 import useRequest from '@/hooks/useRequest';
-import { getPopularFilms, getUpcomingFilms } from '@/api/films';
+import { getPopularFilms, getUpcomingFilms, searchFilms } from '@/api/films';
 
 const FilmsList = () => {
   const { data, loading: isLoading, error: errorInfo } = useRequest(() => getUpcomingFilms(1));
@@ -15,41 +15,64 @@ const FilmsList = () => {
 
   const [showUpcoming, setShowUpcoming] = useState(true);
   const [showPopular, setShowPopular] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const loadFilms = async (fn: any) => {
+    try {
+      setLoading(true);
+      const filmsList = await fn();
+      setFilms(filmsList.results);
+      setTotalPages(filmsList.total_pages);
+      if (error) {
+        setError(null);
+      }
+    } catch (err: any) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const loadUpcomingFilms = (page: number = 1) => {
+    loadFilms(() => getUpcomingFilms(page))
+  }
+
+  const loadPopularFilms = (page: number = 1) => {
+    loadFilms(() => getPopularFilms(page))
+  }
+
+  const loadSearchedFilms = (page: number = 1) => {
+    loadFilms(() => searchFilms({page: page, query: search}))
+  }
 
   useEffect(() => {
-    if (films.length === 0 && data) {
+    if (!search) {
+      setFilms([]);
+      if (totalPages !== 1) {
+        setTotalPages(1);
+      }
+      if (page !== 1) {
+        setPage(1);
+      }
+      if (error) {
+        setError(null);
+      }
+      return;
+    }
+    loadSearchedFilms(1);
+  }, [search])
+
+  useEffect(() => {
+    if (films.length === 0 && search) {
+      setError("Not found")
+    }
+    if (films.length === 0 && data && showUpcoming) {
       setFilms(data.results);
       setTotalPages(data.total_pages);
     }
   }, [data, films])
 
-  const loadUpcomingFilms = async (page: number = 1) => {
-    try {
-      setLoading(true);
-      const filmsList = await getUpcomingFilms(page);
-      setFilms(filmsList.results);
-      setTotalPages(filmsList.total_pages);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const loadPopularFilms = async (page: number = 1) => {
-    try {
-      setLoading(true);
-      const filmsList = await getPopularFilms(page);
-      setFilms(filmsList.results);
-      setTotalPages(filmsList.total_pages);
-    } catch (err: any) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  const loadData = (page: number) => {
+  const loadNewPage = (page: number) => {
     if (showUpcoming) {
       loadUpcomingFilms(page);
       return;
@@ -58,22 +81,24 @@ const FilmsList = () => {
       loadPopularFilms(page);
       return;
     }
+    loadSearchedFilms(page);
   }
 
   const onNextClick = () => {
     setPage((prevState) => prevState + 1);
-    loadData(page + 1);
+    loadNewPage(page + 1);
   }
 
   const onBackClick = () => {
     setPage((prevState) => prevState - 1);
-    loadData(page - 1);
+    loadNewPage(page - 1);
   }
 
-  return <FilmsListDom pagination={{page, totalPages, onNextClick, onBackClick}}
+  return <FilmsListDom pagination={{page, setPage, totalPages, onNextClick, onBackClick}}
                        data={{films, loading, error}}
                        upcomingFilms={{loadUpcomingFilms, showUpcoming, setShowUpcoming}}
                        popularFilms={{loadPopularFilms, showPopular, setShowPopular}}
+                       searchData={{search, setSearch}}
   />;
 };
 
