@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "films list",
   "homepage": "https://github.com/evgeniya-osmakova/filmsList",
-  "license": "none",
+  "license": "UNLICENSED",
   "repository": {
     "type": "git",
     "url": "https://github.com/evgeniya-osmakova/filmsList"
@@ -13,7 +13,7 @@
     "email": "evgeniya.osmakova@gmail.com"
   },
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "https-preview": "serve dist",
